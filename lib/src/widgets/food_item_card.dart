@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/small_button.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class FoodItemCard extends StatelessWidget {
 
@@ -48,11 +49,18 @@ class FoodItemCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text("$title", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),),
+              Container(
+                  child: AutoSizeText(
+                    '$title',
+                    style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
+                    maxLines: 2,
+                  ),
+              ),
               SizedBox(height: 15.0,),
               Container(
                 width: 220.0,
-                child: Text("$description",),
+                child: Text("$description",
+                style: TextStyle(fontSize: 12.0),),
               ),
               SizedBox(height: 15.0,),
               Container(
@@ -60,7 +68,7 @@ class FoodItemCard extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text("\u{2005} $price", style: TextStyle(
+                    Text("Rp. " + "$price", style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
                         color: Colors.blue

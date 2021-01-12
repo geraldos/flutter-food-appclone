@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../models/food_models.dart';
@@ -15,6 +16,10 @@ class FoodModel extends Model {
 
   List<Food> get foods {
     return List.from(_foods);
+  }
+
+  int get foodLength{
+    return _foods.length;
   }
 
   Future<bool> addFood(Food food) async{
@@ -74,8 +79,8 @@ class FoodModel extends Model {
           name: foodData["title"],
           description: foodData["description"],
           category: foodData["category"],
-          price: foodData["price"],
-          discount: foodData["discount"],
+          price: double.parse(foodData["price"].toString()),
+          discount: double.parse(foodData["discount"].toString()),
         );
 
         foodItems.add(foodItem);
@@ -90,5 +95,49 @@ class FoodModel extends Model {
       notifyListeners();
       return Future.value(false);
     }
+  }
+
+  Future<bool> updateFood(Map<String, dynamic> foodData, String foodId) async {
+    _isLoading = true;
+    notifyListeners();
+
+   //get food by id
+    Food theFood = getFoodItemById(foodId);
+
+    //get index of the food
+    int foodIndex = _foods.indexOf(theFood);
+    try{
+      await http.put(DotEnv().env['API_URL_EDIT'], body: json.encode(foodData));
+
+      Food updateFoodItem = Food(
+        id: foodId,
+        name: foodData['title'],
+        description: foodData['description'],
+        category: foodData['category'],
+        price: double.parse(foodData['price']),
+        discount: double.parse(foodData['discount'])
+      );
+
+      _foods[foodIndex] = updateFoodItem;
+
+      _isLoading = false;
+      notifyListeners();
+      return Future.value(true);
+    }catch(error){
+      _isLoading = false;
+      notifyListeners();
+      return Future.value(false);
+    }
+  }
+
+  Food getFoodItemById(String foodId){
+   Food food;
+   for(int i = 0; i < _foods.length; i++){
+     if(_foods[i].id == foodId){
+       food = _foods[i];
+       break;
+     }
+   }
+   return food;
   }
 }
